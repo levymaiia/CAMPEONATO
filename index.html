@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campeonato de Futebol</title>
+<title>Campeonato PRL de FIFA</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --verde: #1a7a4a;
-    --verde-escuro: #0f5533;
+    --verde-escuro: #1266d5;
     --verde-claro: #e8f5ee;
     --verde-grama: #2d8a56;
     --amarelo: #f5c518;
@@ -39,12 +39,12 @@
   header h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 2.2rem;
-    letter-spacing: 2px;
-    color: var(--amarelo);
+    letter-spacing: 3px;
+    color: var(--preto);
   }
   header .badge {
-    background: var(--amarelo);
-    color: var(--preto);
+    background: var(--preto);
+    color: var(--amarelo);
     font-size: 0.7rem;
     font-weight: 600;
     padding: 3px 8px;
@@ -330,11 +330,13 @@
 </head>
 <body>
 
+  
 <header>
   <span style="font-size:1.8rem">⚽</span>
-  <h1>Campeonato</h1>
+  <h1>Campeonato PRL de FIFA</h1>
   <span class="badge">Todos contra Todos</span>
 </header>
+
 
 <div class="container">
   <div class="tabs">
@@ -375,9 +377,8 @@
     <div id="alerta-setup"></div>
 
     <div class="action-bar">
-      <button class="btn-amarelo" onclick="irSorteio()">🎲 Ir para o Sorteio →</button>
-      <button class="btn-secondary" onclick="carregarExemplo()">📋 Carregar exemplo</button>
-      <button class="btn-secondary" onclick="limparTudo()">🗑️ Limpar tudo</button>
+      <button class="btn-amarelo" onclick="irSorteio()">🎲 Sorteios →</button>
+      <button class="btn-secondary" onclick="limparTudo()">🗑️ Excluir Campeonato</button>
     </div>
   </div>
 
