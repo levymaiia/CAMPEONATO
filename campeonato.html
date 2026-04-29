@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campeonato de Futebol</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1a7a4a;
+    --verde-escuro: #0f5533;
+    --verde-claro: #e8f5ee;
+    --verde-grama: #2d8a56;
+    --amarelo: #f5c518;
+    --branco: #f9f9f5;
+    --cinza-claro: #f0efe8;
+    --cinza-medio: #d0cfca;
+    --cinza-texto: #555550;
+    --preto: #1a1a18;
+    --vermelho: #c0392b;
+    --azul: #2563eb;
+    --sombra: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--preto);
+    color: var(--branco);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--verde-escuro);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 3px solid var(--amarelo);
+  }
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    color: var(--amarelo);
+  }
+  header .badge {
+    background: var(--amarelo);
+    color: var(--preto);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.05);
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .tab {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--verde);
+    color: #fff;
+  }
+  .tab:hover:not(.active) { background: rgba(255,255,255,0.08); color: #fff; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
+    color: var(--amarelo);
+    margin-bottom: 1rem;
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input[type="text"]:focus { border-color: var(--verde); }
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
+  button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.18s;
+  }
+  .btn-primary { background: var(--verde); color: #fff; }
+  .btn-primary:hover { background: var(--verde-grama); }
+  .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+  .btn-danger { background: var(--vermelho); color: #fff; }
+  .btn-success { background: #16a34a; color: #fff; }
+  .btn-success:hover { background: #15803d; }
+  .btn-amarelo { background: var(--amarelo); color: var(--preto); }
+  .btn-amarelo:hover { background: #e0b00e; }
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 40px;
+    background: rgba(0,0,0,0.2);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .tag-pessoa { background: rgba(37,99,235,0.25); border: 1px solid rgba(37,99,235,0.4); color: #93c5fd; }
+  .tag-time { background: rgba(26,122,74,0.3); border: 1px solid rgba(26,122,74,0.5); color: #86efac; }
+  .tag-btn { background: none; border: none; color: inherit; cursor: pointer; padding: 0; font-size: 0.9rem; opacity: 0.6; }
+  .tag-btn:hover { opacity: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+  .sorteio-result {
+    display: grid;
+    gap: 10px;
+  }
+  .time-card {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .time-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--amarelo);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+  }
+  .time-jogadores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .jogador-chip {
+    background: rgba(37,99,235,0.2);
+    border: 1px solid rgba(37,99,235,0.3);
+    color: #93c5fd;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+  }
+  .tabela-camp {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .tabela-camp th {
+    padding: 10px 8px;
+    text-align: center;
+    background: rgba(26,122,74,0.3);
+    color: var(--amarelo);
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+  }
+  .tabela-camp th:first-child { text-align: left; padding-left: 12px; }
+  .tabela-camp td {
+    padding: 9px 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+  }
+  .tabela-camp td:first-child { text-align: left; padding-left: 12px; font-weight: 500; }
+  .tabela-camp tr:hover td { background: rgba(255,255,255,0.03); }
+  .pos-1 td:first-child::before { content: "🥇 "; }
+  .pos-2 td:first-child::before { content: "🥈 "; }
+  .pos-3 td:first-child::before { content: "🥉 "; }
+  .pts-cell { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--amarelo); }
+  .confrontos-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .jogo-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .jogo-time { flex: 1; font-weight: 500; font-size: 0.95rem; }
+  .jogo-time.direita { text-align: right; }
+  .jogo-placar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .placar-input {
+    width: 48px;
+    padding: 6px 4px;
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+  .placar-input:focus { border-color: var(--amarelo); }
+  .placar-sep { font-size: 1.1rem; font-weight: 600; color: rgba(255,255,255,0.4); }
+  .status-badge {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-pendente { background: rgba(245,197,24,0.15); color: var(--amarelo); }
+  .status-concluido { background: rgba(22,163,74,0.2); color: #86efac; }
+  .btn-salvar { padding: 5px 10px; font-size: 0.78rem; background: var(--verde); color: #fff; border-radius: 6px; }
+  .btn-salvar:hover { background: var(--verde-grama); }
+  .rodada-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.5);
+    margin: 1.2rem 0 0.6rem;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.9rem;
+  }
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .stat-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .stat-pill strong { color: var(--amarelo); font-size: 1rem; }
+  .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.87rem;
+    margin-bottom: 1rem;
+  }
+  .alert-info { background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.3); color: #93c5fd; }
+  .alert-success { background: rgba(22,163,74,0.15); border: 1px solid rgba(22,163,74,0.3); color: #86efac; }
+  .alert-warn { background: rgba(245,197,24,0.12); border: 1px solid rgba(245,197,24,0.3); color: var(--amarelo); }
+  .campeao-banner {
+    background: linear-gradient(135deg, rgba(245,197,24,0.15), rgba(26,122,74,0.15));
+    border: 2px solid var(--amarelo);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .campeao-banner h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--amarelo);
+    letter-spacing: 3px;
+    margin-bottom: 0.25rem;
+  }
+  .campeao-banner p { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+  .saldo-pos { color: #86efac; }
+  .saldo-neg { color: #fca5a5; }
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:1.8rem">⚽</span>
+  <h1>Campeonato</h1>
+  <span class="badge">Todos contra Todos</span>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('setup')">⚙️ Configuração</button>
+    <button class="tab" onclick="showTab('sorteio')">🎲 Sorteio</button>
+    <button class="tab" onclick="showTab('jogos')">🏟️ Jogos</button>
+    <button class="tab" onclick="showTab('tabela')">📊 Tabela</button>
+  </div>
+
+  <!-- SETUP -->
+  <div class="section active" id="tab-setup">
+    <div class="grid-2">
+      <div class="card">
+        <h2>👥 Jogadores</h2>
+        <div class="input-row">
+          <input type="text" id="input-pessoa" placeholder="Nome do jogador..." onkeydown="if(event.key==='Enter') addPessoa()">
+          <button class="btn-primary" onclick="addPessoa()">+ Adicionar</button>
+        </div>
+        <div class="tags-container" id="lista-pessoas">
+          <span style="color:rgba(255,255,255,0.2);font-size:0.8rem">Nenhum jogador adicionado</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.78rem;color:rgba(255,255,255,0.3)" id="count-pessoas">0 jogadores</div>
+      </div>
+
+      <div class="card">
+        <h2>🏆 Times</h2>
+        <div class="input-row">
+          <input type="text" id="input-time" placeholder="Nome do time..." onkeydown="if(event.key==='Enter') addTime()">
+          <button class="btn-primary" onclick="addTime()">+ Adicionar</button>
+        </div>
+        <div class="tags-container" id="lista-times">
+          <span style="color:rgba(255,255,255,0.2);font-size:0.8rem">Nenhum time adicionado</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.78rem;color:rgba(255,255,255,0.3)" id="count-times">0 times</div>
+      </div>
+    </div>
+
+    <div id="alerta-setup"></div>
+
+    <div class="action-bar">
+      <button class="btn-amarelo" onclick="irSorteio()">🎲 Ir para o Sorteio →</button>
+      <button class="btn-secondary" onclick="carregarExemplo()">📋 Carregar exemplo</button>
+      <button class="btn-secondary" onclick="limparTudo()">🗑️ Limpar tudo</button>
+    </div>
+  </div>
+
+  <!-- SORTEIO -->
+  <div class="section" id="tab-sorteio">
+    <div class="card">
+      <h2>🎲 Sorteio dos Times</h2>
+      <div id="sorteio-content">
+        <div class="empty-state">Configure jogadores e times na aba <strong>Configuração</strong> primeiro.</div>
+      </div>
+    </div>
+    <div id="btn-sortear-area"></div>
+  </div>
+
+  <!-- JOGOS -->
+  <div class="section" id="tab-jogos">
+    <div id="jogos-content">
+      <div class="empty-state">Realize o sorteio e gere os confrontos primeiro.</div>
+    </div>
+  </div>
+
+  <!-- TABELA -->
+  <div class="section" id="tab-tabela">
+    <div id="tabela-content">
+      <div class="empty-state">Nenhum jogo registrado ainda.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let pessoas = [];
+let times = [];
+let timesSorteados = {}; // {nomeTime: [jogadores]}
+let confrontos = []; // {id, timeA, timeB, golsA, golsB, concluido}
+let sorteioFeito = false;
+let confrontosGerados = false;
+
+// ── SETUP ──
+function addPessoa() {
+  const el = document.getElementById('input-pessoa');
+  const nome = el.value.trim();
+  if (!nome) return;
+  if (pessoas.includes(nome)) { showAlert('alerta-setup', 'Jogador já adicionado!', 'warn'); return; }
+  pessoas.push(nome);
+  el.value = '';
+  renderPessoas();
+}
+
+function removePessoa(nome) {
+  pessoas = pessoas.filter(p => p !== nome);
+  renderPessoas();
+}
+
+function addTime() {
+  const el = document.getElementById('input-time');
+  const nome = el.value.trim();
+  if (!nome) return;
+  if (times.includes(nome)) { showAlert('alerta-setup', 'Time já adicionado!', 'warn'); return; }
+  times.push(nome);
+  el.value = '';
+  renderTimes();
+}
+
+function removeTime(nome) {
+  times = times.filter(t => t !== nome);
+  renderTimes();
+}
+
+function renderPessoas() {
+  const el = document.getElementById('lista-pessoas');
+  document.getElementById('count-pessoas').textContent = `${pessoas.length} jogador(es)`;
+  if (!pessoas.length) { el.innerHTML = '<span style="color:rgba(255,255,255,0.2);font-size:0.8rem">Nenhum jogador adicionado</span>'; return; }
+  el.innerHTML = pessoas.map(p => `<span class="tag tag-pessoa">${p}<button class="tag-btn" onclick="removePessoa('${p.replace(/'/g,"\\'")}')">✕</button></span>`).join('');
+}
+
+function renderTimes() {
+  const el = document.getElementById('lista-times');
+  document.getElementById('count-times').textContent = `${times.length} time(s)`;
+  if (!times.length) { el.innerHTML = '<span style="color:rgba(255,255,255,0.2);font-size:0.8rem">Nenhum time adicionado</span>'; return; }
+  el.innerHTML = times.map(t => `<span class="tag tag-time">${t}<button class="tag-btn" onclick="removeTime('${t.replace(/'/g,"\\'")}')">✕</button></span>`).join('');
+}
+
+function irSorteio() {
+  if (!pessoas.length || !times.length) {
+    showAlert('alerta-setup', 'Adicione pelo menos 1 jogador e 1 time!', 'warn'); return;
+  }
+  showTab('sorteio');
+  renderSorteio();
+}
+
+function carregarExemplo() {
+  pessoas = ['João', 'Pedro', 'Lucas', 'Rafael', 'Carlos', 'Marcos', 'Felipe', 'André'];
+  times = ['Leões', 'Águias', 'Tubarões', 'Lobos'];
+  renderPessoas();
+  renderTimes();
+}
+
+function limparTudo() {
+  if (!confirm('Tem certeza? Todos os dados serão apagados.')) return;
+  pessoas = []; times = []; timesSorteados = {}; confrontos = [];
+  sorteioFeito = false; confrontosGerados = false;
+  renderPessoas(); renderTimes();
+  document.getElementById('sorteio-content').innerHTML = '<div class="empty-state">Configure jogadores e times na aba <strong>Configuração</strong> primeiro.</div>';
+  document.getElementById('btn-sortear-area').innerHTML = '';
+  document.getElementById('jogos-content').innerHTML = '<div class="empty-state">Realize o sorteio e gere os confrontos primeiro.</div>';
+  document.getElementById('tabela-content').innerHTML = '<div class="empty-state">Nenhum jogo registrado ainda.</div>';
+}
+
+// ── SORTEIO ──
+function renderSorteio() {
+  const el = document.getElementById('sorteio-content');
+  const btnArea = document.getElementById('btn-sortear-area');
+
+  if (!pessoas.length || !times.length) {
+    el.innerHTML = '<div class="empty-state">Configure jogadores e times primeiro.</div>';
+    btnArea.innerHTML = '';
+    return;
+  }
+
+  const statBar = `<div class="stat-bar">
+    <div class="stat-pill"><strong>${pessoas.length}</strong> jogadores</div>
+    <div class="stat-pill"><strong>${times.length}</strong> times</div>
+    <div class="stat-pill"><strong>${Math.ceil(pessoas.length/times.length)}</strong> jogadores/time</div>
+  </div>`;
+
+  if (!sorteioFeito || !Object.keys(timesSorteados).length) {
+    el.innerHTML = statBar + '<div class="alert alert-info">Clique em "Realizar Sorteio" para distribuir os jogadores aleatoriamente pelos times.</div>';
+    btnArea.innerHTML = `<div class="action-bar">
+      <button class="btn-amarelo" onclick="realizarSorteio()">🎲 Realizar Sorteio</button>
+    </div>`;
+  } else {
+    renderResultadoSorteio();
+  }
+}
+
+function realizarSorteio() {
+  const shuffled = [...pessoas].sort(() => Math.random() - 0.5);
+  timesSorteados = {};
+  times.forEach(t => timesSorteados[t] = []);
+  shuffled.forEach((p, i) => timesSorteados[times[i % times.length]].push(p));
+  sorteioFeito = true;
+  renderResultadoSorteio();
+}
+
+function renderResultadoSorteio() {
+  const el = document.getElementById('sorteio-content');
+  const btnArea = document.getElementById('btn-sortear-area');
+
+  let html = `<div class="alert alert-success">✅ Sorteio realizado! Veja a distribuição abaixo.</div>`;
+  html += `<div class="sorteio-result">`;
+  times.forEach(t => {
+    const jogadores = timesSorteados[t] || [];
+    html += `<div class="time-card">
+      <h3>⚽ ${t}</h3>
+      <div class="time-jogadores">${jogadores.map(j => `<span class="jogador-chip">${j}</span>`).join('') || '<span style="color:rgba(255,255,255,0.3);font-size:0.8rem">Sem jogadores</span>'}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+
+  let btns = `<div class="action-bar">
+    <button class="btn-secondary" onclick="realizarSorteio()">🔀 Novo Sorteio</button>`;
+  if (!confrontosGerados) {
+    btns += `<button class="btn-amarelo" onclick="gerarConfrontos()">📅 Gerar Confrontos</button>`;
+  } else {
+    btns += `<button class="btn-success" onclick="showTab('jogos')">🏟️ Ver Jogos →</button>`;
+  }
+  btns += `</div>`;
+  btnArea.innerHTML = btns;
+}
+
+// ── CONFRONTOS ──
+function gerarConfrontos() {
+  confrontos = [];
+  let id = 0;
+  for (let i = 0; i < times.length; i++) {
+    for (let j = i + 1; j < times.length; j++) {
+      confrontos.push({ id: id++, timeA: times[i], timeB: times[j], golsA: null, golsB: null, concluido: false });
+    }
+  }
+  confrontosGerados = true;
+  showAlert('alerta-setup', '', '');
+  renderSorteio();
+  renderJogos();
+  renderTabela();
+  showTab('jogos');
+}
+
+function renderJogos() {
+  const el = document.getElementById('jogos-content');
+  if (!confrontos.length) {
+    el.innerHTML = '<div class="empty-state">Nenhum confronto gerado ainda.</div>'; return;
+  }
+
+  const total = confrontos.length;
+  const concluidos = confrontos.filter(c => c.concluido).length;
+
+  let html = `<div class="stat-bar">
+    <div class="stat-pill"><strong>${total}</strong> jogos no total</div>
+    <div class="stat-pill"><strong>${concluidos}</strong> concluídos</div>
+    <div class="stat-pill"><strong>${total - concluidos}</strong> pendentes</div>
+  </div>`;
+
+  if (concluidos === total && total > 0) {
+    html += `<div class="alert alert-success">🏆 Campeonato encerrado! Todos os jogos foram registrados. Veja a tabela final!</div>`;
+  }
+
+  html += `<div class="confrontos-grid">`;
+
+  // agrupar por rodada
+  const rodadas = gerarRodadas();
+  rodadas.forEach((rodada, ri) => {
+    html += `<div class="rodada-header">Rodada ${ri + 1}</div>`;
+    rodada.forEach(id => {
+      const c = confrontos.find(x => x.id === id);
+      if (!c) return;
+      const statusClass = c.concluido ? 'status-concluido' : 'status-pendente';
+      const statusText = c.concluido ? 'Concluído' : 'Pendente';
+      const vA = c.golsA !== null ? c.golsA : '';
+      const vB = c.golsB !== null ? c.golsB : '';
+      html += `<div class="jogo-card">
+        <div class="jogo-time">${c.timeA}</div>
+        <div class="jogo-placar">
+          <input type="number" class="placar-input" id="gA-${c.id}" value="${vA}" min="0" placeholder="-">
+          <span class="placar-sep">×</span>
+          <input type="number" class="placar-input" id="gB-${c.id}" value="${vB}" min="0" placeholder="-">
+        </div>
+        <div class="jogo-time direita">${c.timeB}</div>
+        <span class="status-badge ${statusClass}">${statusText}</span>
+        <button class="btn-salvar" onclick="salvarPlacar(${c.id})">✔ Salvar</button>
+      </div>`;
+    });
+  });
+
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function gerarRodadas() {
+  // distribuição simples: round-robin
+  const n = times.length;
+  const rodadas = [];
+  const usados = new Set();
+  const todos = [...confrontos.map(c => c.id)];
+
+  // round-robin clásico
+  let lista = [...times];
+  if (lista.length % 2 !== 0) lista.push('BYE');
+  const m = lista.length;
+  for (let r = 0; r < m - 1; r++) {
+    const rodada = [];
+    for (let k = 0; k < m / 2; k++) {
+      const tA = lista[k];
+      const tB = lista[m - 1 - k];
+      const c = confrontos.find(x =>
+        (x.timeA === tA && x.timeB === tB) || (x.timeA === tB && x.timeB === tA)
+      );
+      if (c && !usados.has(c.id)) { rodada.push(c.id); usados.add(c.id); }
+    }
+    if (rodada.length) rodadas.push(rodada);
+    lista = [lista[0], ...lista.slice(2), lista[1]];
+  }
+  // se sobrou algum
+  const sobra = todos.filter(id => !usados.has(id));
+  if (sobra.length) rodadas.push(sobra);
+  return rodadas;
+}
+
+function salvarPlacar(id) {
+  const c = confrontos.find(x => x.id === id);
+  const vA = document.getElementById(`gA-${id}`).value;
+  const vB = document.getElementById(`gB-${id}`).value;
+  if (vA === '' || vB === '') { alert('Preencha os dois placares!'); return; }
+  c.golsA = parseInt(vA);
+  c.golsB = parseInt(vB);
+  c.concluido = true;
+  renderJogos();
+  renderTabela();
+}
+
+// ── TABELA ──
+function renderTabela() {
+  const el = document.getElementById('tabela-content');
+  if (!times.length) { el.innerHTML = '<div class="empty-state">Configure o campeonato primeiro.</div>'; return; }
+
+  const stats = {};
+  times.forEach(t => stats[t] = { pts: 0, j: 0, v: 0, e: 0, d: 0, gp: 0, gc: 0, sg: 0 });
+
+  confrontos.filter(c => c.concluido).forEach(c => {
+    const a = stats[c.timeA], b = stats[c.timeB];
+    a.j++; b.j++;
+    a.gp += c.golsA; a.gc += c.golsB; a.sg += (c.golsA - c.golsB);
+    b.gp += c.golsB; b.gc += c.golsA; b.sg += (c.golsB - c.golsA);
+    if (c.golsA > c.golsB) { a.v++; a.pts += 3; b.d++; }
+    else if (c.golsA < c.golsB) { b.v++; b.pts += 3; a.d++; }
+    else { a.e++; b.e++; a.pts += 1; b.pts += 1; }
+  });
+
+  const ordenados = times.slice().sort((a, b) => {
+    const sa = stats[a], sb = stats[b];
+    if (sb.pts !== sa.pts) return sb.pts - sa.pts;
+    if (sb.v !== sa.v) return sb.v - sa.v;
+    if (sb.sg !== sa.sg) return sb.sg - sa.sg;
+    return sb.gp - sa.gp;
+  });
+
+  const total = confrontos.length;
+  const concluidos = confrontos.filter(c => c.concluido).length;
+  const encerrado = total > 0 && concluidos === total;
+
+  let html = '';
+  if (encerrado) {
+    html += `<div class="campeao-banner">
+      <div style="font-size:2.5rem">🏆</div>
+      <h2>CAMPEÃO: ${ordenados[0]}</h2>
+      <p>${stats[ordenados[0]].pts} pontos · ${stats[ordenados[0]].v} vitórias · Saldo de gols: ${stats[ordenados[0]].sg > 0 ? '+' : ''}${stats[ordenados[0]].sg}</p>
+    </div>`;
+  }
+
+  html += `<div class="stat-bar">
+    <div class="stat-pill"><strong>${concluidos}</strong>/${total} jogos</div>
+    <div class="stat-pill"><strong>${Math.round(concluidos/Math.max(total,1)*100)}%</strong> concluído</div>
+  </div>`;
+
+  html += `<div class="card" style="padding:0;overflow:hidden">
+  <table class="tabela-camp">
+    <thead><tr>
+      <th>#</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GC</th><th>SG</th>
+    </tr></thead>
+    <tbody>`;
+
+  ordenados.forEach((t, i) => {
+    const s = stats[t];
+    const rowClass = i === 0 ? 'pos-1' : i === 1 ? 'pos-2' : i === 2 ? 'pos-3' : '';
+    const sgClass = s.sg > 0 ? 'saldo-pos' : s.sg < 0 ? 'saldo-neg' : '';
+    html += `<tr class="${rowClass}">
+      <td>${t}</td>
+      <td class="pts-cell">${s.pts}</td>
+      <td>${s.j}</td>
+      <td>${s.v}</td>
+      <td>${s.e}</td>
+      <td>${s.d}</td>
+      <td>${s.gp}</td>
+      <td>${s.gc}</td>
+      <td class="${sgClass}">${s.sg > 0 ? '+' : ''}${s.sg}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  html += `<div style="margin-top:1rem;font-size:0.75rem;color:rgba(255,255,255,0.3)">
+    PTS = Pontos · J = Jogos · V = Vitórias · E = Empates · D = Derrotas · GP = Gols Pró · GC = Gols Contra · SG = Saldo de Gols
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+// ── UTILS ──
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const tabs = ['setup','sorteio','jogos','tabela'];
+  document.querySelectorAll('.tab')[tabs.indexOf(id)].classList.add('active');
+  if (id === 'sorteio') renderSorteio();
+  if (id === 'jogos') renderJogos();
+  if (id === 'tabela') renderTabela();
+}
+
+function showAlert(elId, msg, type) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!msg) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => { if (el) el.innerHTML = ''; }, 3000);
+}
+</script>
+</body>
+</html>
